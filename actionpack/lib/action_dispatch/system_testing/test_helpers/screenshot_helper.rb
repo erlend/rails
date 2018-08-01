@@ -73,7 +73,12 @@ module ActionDispatch
             when "inline"
               name = inline_base64(File.basename(absolute_image_path))
               image = inline_base64(File.read(absolute_image_path))
-              message << "\e]1337;File=name=#{name};height=400px;inline=1:#{image}\a\n"
+
+              if ENV['TERM'].to_s.start_with?('screen')
+                osc, st = ["\ePtmux;\e", "\e\\"]
+              end
+
+              message << "#{osc}\e]1337;File=name=#{name};height=400px;inline=1:#{image}\a#{st}\n"
             end
 
             message
